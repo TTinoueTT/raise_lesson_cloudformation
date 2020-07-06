@@ -1,0 +1,104 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: RaisetechSampleForNetWorkLayer
+# VPC,Subnet,IGW,RT,
+# Metadata:
+
+# Parameters:
+
+# Mappings:
+
+# Conditions:
+
+Resources:
+  # =============VPC==============================================
+  myRaiseTechVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.10.0/16
+      EnableDnsSupport: true
+      Tags:
+        - Key: Name
+          Value: MyRaiseSample-it-01
+  # ============= パブリックサブネット1a =============================
+  myRaiseTechPublicSubnet01a:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: ap-northeast-1a
+      VpcId: !Ref myRaiseTechVPC
+      CidrBlock: 10.0.0.0/24
+      Tags:
+        - Key: Name
+          Value: MyRaiseSample-it-01
+  # ============= プライベートサブネット2a =============================
+  myRaiseTechPrivateSubnet02a:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: ap-northeast-1a
+      VpcId: !Ref myRaiseTechVPC
+      CidrBlock: 10.0.3.0/24
+      Tags:
+        - Key: Name
+          Value: MyRaiseSample-it-01
+  # ============= パブリックサブネット1c =============================
+  myRaiseTechPublicSubnet01c:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: ap-northeast-1c
+      VpcId: !Ref myRaiseTechVPC
+      CidrBlock: 10.0.1.0/24
+      Tags:
+        - Key: Name
+          Value: MyRaiseSample-it-01
+  # ============= プライベートサブネット2c =============================
+  myRaiseTechPrivateSubnet02c:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: ap-northeast-1c
+      VpcId: !Ref myRaiseTechVPC
+      CidrBlock: 10.0.4.0/24
+      Tags:
+        - Key: Name
+          Value: MyRaiseSample-it-01
+  # ============= IGW =============================
+  myRaiseTechIGW:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: MyRaiseSample-it-01
+  myRaiseTechVPCtoIGW: # VPCとIGW関連付け
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref myRaiseTechVPC
+      InternetGatewayId: !Ref myRaiseTechIGW
+  # ============= ルートテーブル =============================
+  myRaiseTechRouteTable01:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref myRaiseTechVPC
+      Tags:
+        - Key: Name
+          Value: MyRaiseSample-it-01
+  myRaiseTechSubnetToRT01:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref myRaiseTechPublicSubnet01a
+      RouteTableId: !Ref myRaiseTechRouteTable01
+  myRaiseTechRoute01:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref myRaiseTechRouteTable01
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref myRaiseTechIGW
+# ============= 出力 =============================
+Outputs:
+  myRaiseTechVPC:
+    Description: Information about the value
+    Value: !Ref myRaiseTechVPC
+    Export:
+      Name: !Sub "${AWS::StackName}-myRaiseTechVPC"
+  myRaiseTechPublicSubnet01a:
+    Description: PublicSubnet 01a
+    Value: !Ref myRaiseTechPublicSubnet01a
+    Export:
+      Name: !Sub "${AWS::StackName}-myRaiseTechPublicSubnet01a"
