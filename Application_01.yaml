@@ -9,6 +9,22 @@ Parameters:
     Type: AWS::EC2::KeyPair::KeyName
     Default: myRaiseTechEC2connectSshKey
 
+  myRaiseTechRdsDBMasterUsername:
+    Description: DB instance(postgre) Master username /initials are letters
+    Type: String
+    Default: root
+    MaxLength: 63
+    MinLength: 1
+    # NoEcho: false
+
+  myRaiseTechRdsDBMasterPassword:
+    Description: this DB instance(postgre) Master userpassword
+    Type: String
+    Default: password
+    MaxLength: 128
+    MinLength: 8
+    NoEcho: true
+
 # Mappings:
 
 # Conditions:
@@ -18,20 +34,132 @@ Resources:
   myRaiseTechEc2a:
     Type: AWS::EC2::Instance
     Properties:
-      KeyName: !Ref KeyPairName
+      KeyName: !Ref KeyPairName # publickey
       # DisableApiTermination:
-      ImageId: ami-082e0157fbbf13d6c
+      ImageId: ami-082e0157fbbf13d6c # AMIid
       InstanceType: t2.micro
       Monitoring: true
-      SecurityGroupIds:
+      SecurityGroupIds: # type: stringlist
         - Fn::ImportValue: MyRaiseSample-it-01-SEC-myRaiseTechSecWeb01
-      SubnetId:
+      SubnetId: # type: string(only resource)
         !ImportValue MyRaiseSample-it-01-myRaiseTechPublicSubnet01a
         # - Fn::ImportValue: MyRaiseSample-it-01-myRaiseTechPublicSubnet01a
-      UserData: !Base64 |
+      UserData: !Base64 | # bootingPrograms
         #!/bin/bash -ex
         # put your script here
       Tags:
         - Key: Name
           Value: MyRaiseSample-it-01-APP
+  # =============RDS(PrivateSubnet1a/1c)=======================================
+  myRaiseTechRdsDBMaster: # DBinstanceLogicalid
+    Type: AWS::RDS::DBInstance
+    # DependsOn:
+    #   - DBSubnetGroup
+    Properties:
+      AllocatedStorage: 20
+      DBInstanceClass: db.t2.micro
+      AllowMajorVersionUpgrade: true
+      AutoMinorVersionUpgrade: true
+      AvailabilityZone: ap-northeast-1a
+      BackupRetentionPeriod: 7
+      # CharacterSetName:
+      DBInstanceIdentifier: myRaiseTechPostgreSQL
+      DBName: myRaiseTechDB
+      DBParameterGroupName: aws-raise-inoue-postgres12
+      # DBSecurityGroups:
+      #   - Fn::ImportValue:
+      # DBSnapshotIdentifier:
+      DBSubnetGroupName: !Ref myRaiseTechRdsDBSubnetGroup
+      Engine: postgres
+      EngineVersion: 12.2
+      # Iops:
+      # KmsKeyId:
+      # LicenseModel:
+      MasterUsername: !Ref myRaiseTechRdsDBMasterUsername
+      MasterUserPassword: !Ref myRaiseTechRdsDBMasterPassword
+      # MultiAZ: true|false
+      # OptionGroupName:
+      Port: 5432
+      PreferredBackupWindow: 17:00-03:00
+      # PreferredMaintenanceWindow:
+      PubliclyAccessible: false
+      # SourceDBInstanceIdentifier: #Readreplicaでの設定
+      # StorageEncrypted: true|false
+      StorageType: gp2
+      VPCSecurityGroups:
+        - Fn::ImportValue: MyRaiseSample-it-01-SEC-myRaiseTechSecRds01
+      Tags:
+        - Key: Name
+          Value: myRaiseTechDB-instance
+
+  myRaiseTechRdsDBSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: DB for subnetgroups
+      SubnetIds:
+        - Fn::ImportValue: MyRaiseSample-it-01-myRaiseTechPrivateSubnet02a
+        - Fn::ImportValue: MyRaiseSample-it-01-myRaiseTechPrivateSubnet02c
+      Tags:
+        - Key: Name
+          Value: myRaiseTechDB-subnetGroups
+  # ============= ALB =======================================
+  myRaiseTechAlb01:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      IpAddressType: dualstack
+      LoadBalancerAttributes: # ロードバランサーの属性
+        - LoadBalancerAttributeのリスト
+      Name: my-raisetech-alb #ロードバランサーの名前(32文字)
+      Scheme: internet-facing
+      SecurityGroups:
+        - Fn::ImportValue: MyRaiseSample-it-01-SEC-myRaiseTechSecAlb01
+      SubnetMappings:
+        - Fn::ImportValue: MyRaiseSample-it-01-myRaiseTechPublicSubnet01a
+        - Fn::ImportValue: MyRaiseSample-it-01-myRaiseTechPublicSubnet01c
+        # - SubnetMappingのリスト
+      # Subnets:
+      #   - String
+      Tags:
+        - Key: Name
+          Value: myRaiseTechAlb
+      Type: application
+  # ============= ALB Listener ==============================
+  myRaiseTechAlbListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      DefaultActions: #デフォルトのリスナールールのアクションを指定
+        - TargetGroupArn: !Ref myRaiseTechAlbTargetGroup
+          Type: forward
+      LoadBalancerArn: !Ref myRaiseTechAlb01 #ロードバランサーのARN・論理ID
+      Port: 80 #ロードバランサーがリッスンするポート
+      Protocol: HTTP #| HTTPS | TCP | TCP_UDP | TLS | UDP
+  # ============= ALB TG ==============================
+  myRaiseTechAlbTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      HealthCheckEnabled: true #ヘルスチェックが有効になっているかどうか、TargetTypeの値で真偽値が決まる
+      HealthCheckIntervalSeconds: 10 #5~300ヘルスチェックの間隔(秒単位)
+      HealthCheckPath: / #1~1024文字ヘルスチェックのターゲットの送信先であるpingパス、デフォルトは"/"
+      HealthCheckPort: traffic-port #ロードバランサーがターゲットのヘルスチェックを行うときに使用するポート。デフォルトは traffic-port で、各ターゲットがロードバランサーからのトラフィックを受信するポート
+      HealthCheckProtocol: HTTP
+      HealthCheckTimeoutSeconds: 5 #2~120,ヘルスチェックで失敗と見なす、ターゲットからレスポンスがない時間(秒単位)
+      HealthyThresholdCount: 2 #2~10,非正常なインスタンスが正常であると見なすまでに必要なヘルスチェックの連続成功回数
+      Matcher: #ターゲットからの正常なレスポンスを確認するために使用するHTTPコード
+        HttpCode: 200 #ALBの場合、200~499。デフォルトは200
+      Name: myRaiseTechAlb #ターゲットグループの名前
+      Port: 80 #ターゲットがトラフィックを受信するポート
+      Protocol: HTTP
+      Tags:
+        - Key: Name
+          Value: myRaiseTechAlb
+      # TargetGroupAttributes:
+      #   -  #TargetGroupAttributeのリスト
+      Targets:
+        - Id: !Ref myRaiseTechEc2a #TargetDescriptionのリスト
+          Port: 80
+      TargetType: instance #| ip | lambda
+      UnhealthyThresholdCount: 2 #2~10,異常であると見なされるまでに必要なヘルスチェックの連続失敗回数
+      VpcId:
+        Fn::ImportValue: MyRaiseSample-it-01-myRaiseTechVPC
+# ============= Outputs =======================================
 # Outputs:

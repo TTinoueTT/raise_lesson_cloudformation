@@ -22,6 +22,10 @@ Resources:
           FromPort: 80
           ToPort: 80
           CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
         # - IpProtocol: tcp
         #   FromPort: 80
         #   ToPort: 80
@@ -52,6 +56,10 @@ Resources:
         #   FromPort: 80
         #   ToPort: 80
         #   CidrIp: ::/0
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
       Tags:
         - Key: Name
           Value: MyRaiseSample-it-01-SEC
@@ -67,7 +75,7 @@ Resources:
         - IpProtocol: tcp
           FromPort: 5432
           ToPort: 5432
-          CidrIp: 0.0.0.0/0
+          # CidrIp: 0.0.0.0/0
       Tags:
         - Key: Name
           Value: MyRaiseSample-it-01-SEC
@@ -78,3 +86,15 @@ Outputs:
     Value: !Ref myRaiseTechSecWeb01
     Export:
       Name: !Sub "${AWS::StackName}-myRaiseTechSecWeb01"
+
+  myRaiseTechSecRds01:
+    Description: SecurityGroup for PostgreSQL
+    Value: !Ref myRaiseTechSecRds01
+    Export:
+      Name: !Sub "${AWS::StackName}-myRaiseTechSecRds01"
+
+  myRaiseTechSecAlb:
+    Description: SecurityGroup for ALB
+    Value: !Ref myRaiseTechSecAlb01
+    Export:
+      Name: !Sub "${AWS::StackName}-myRaiseTechSecAlb01"
