@@ -28,7 +28,7 @@ Resources:
       CidrBlock: 10.0.0.0/24
       Tags:
         - Key: Name
-          Value: MyRaiseSample-it-01
+          Value: MyRaiseSamplePubSub1a
   # ============= プライベートサブネット2a =============================
   myRaiseTechPrivateSubnet02a:
     Type: AWS::EC2::Subnet
@@ -38,7 +38,7 @@ Resources:
       CidrBlock: 10.0.3.0/24
       Tags:
         - Key: Name
-          Value: MyRaiseSample-it-01
+          Value: MyRaiseSamplePriSub2a
   # ============= パブリックサブネット1c =============================
   myRaiseTechPublicSubnet01c:
     Type: AWS::EC2::Subnet
@@ -48,7 +48,7 @@ Resources:
       CidrBlock: 10.0.1.0/24
       Tags:
         - Key: Name
-          Value: MyRaiseSample-it-01
+          Value: MyRaiseSamplePubSub1c
   # ============= プライベートサブネット2c =============================
   myRaiseTechPrivateSubnet02c:
     Type: AWS::EC2::Subnet
@@ -58,7 +58,7 @@ Resources:
       CidrBlock: 10.0.4.0/24
       Tags:
         - Key: Name
-          Value: MyRaiseSample-it-01
+          Value: MyRaiseSamplePriSub2c
   # ============= IGW =============================
   myRaiseTechIGW:
     Type: AWS::EC2::InternetGateway
@@ -97,8 +97,27 @@ Outputs:
     Value: !Ref myRaiseTechVPC
     Export:
       Name: !Sub "${AWS::StackName}-myRaiseTechVPC"
+
   myRaiseTechPublicSubnet01a:
     Description: PublicSubnet 01a
     Value: !Ref myRaiseTechPublicSubnet01a
     Export:
       Name: !Sub "${AWS::StackName}-myRaiseTechPublicSubnet01a"
+
+  myRaiseTechPublicSubnet01c:
+    Description: PublicSubnet 01c
+    Value: !Ref myRaiseTechPublicSubnet01c
+    Export:
+      Name: !Sub "${AWS::StackName}-myRaiseTechPublicSubnet01c"
+
+  myRaiseTechPrivateSubnet02a:
+    Description: PrivateSubnet 02a
+    Value: !Ref myRaiseTechPrivateSubnet02a
+    Export:
+      Name: !Sub "${AWS::StackName}-myRaiseTechPrivateSubnet02a"
+
+  myRaiseTechPrivateSubnet02c:
+    Description: PrivateSubnet 02c
+    Value: !Ref myRaiseTechPrivateSubnet02c
+    Export:
+      Name: !Sub "${AWS::StackName}-myRaiseTechPrivateSubnet02c"
