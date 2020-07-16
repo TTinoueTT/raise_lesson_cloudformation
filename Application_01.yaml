@@ -67,7 +67,7 @@ Resources:
       # Ipv6AddressCount: #Integer #ネットワークインターフェイスに割り当てるIPv6アドレスの数、EC2ではサブネットの範囲から自動で選択
       # Ipv6Addresses:
       #     Ipv6Address: #String #関連付ける固定のIPv6アドレス(1つ以上)
-      PrivateIpAddress: 10.0.1.1 #単一のプライベートIPv4アドレスを割り当てる場合
+      PrivateIpAddress: 10.0.1.4 #単一のプライベートIPv4アドレスを割り当てる場合
       # PrivateIpAddresses: #複数のプライベートIPv4アドレスを指定する場合
       #    # PrivateIpAddressSpecification
       #   - Primary: # Boolean #trueならprimaryで一つだけ
