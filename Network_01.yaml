@@ -28,7 +28,8 @@ Resources:
     Properties:
       AvailabilityZone: !FindInMap [RegionAZ, !Ref "AWS::Region", primary]
       VpcId: !Ref myRaiseTechVPC
-      CidrBlock: 10.0.0.0/24
+      CidrBlock: 10.0.1.0/24
+      MapPublicIpOnLaunch: true #Boolean|このサブネットで起動されたインスタンスがパブリックIPv4アドレスの自動割り当てを受理するか、デフォルトはfalse
       Tags:
         - Key: Name
           Value: MyRaiseSamplePubSub1a
@@ -38,7 +39,7 @@ Resources:
     Properties:
       AvailabilityZone: !FindInMap [RegionAZ, !Ref "AWS::Region", primary]
       VpcId: !Ref myRaiseTechVPC
-      CidrBlock: 10.0.3.0/24
+      CidrBlock: 10.0.2.0/24
       Tags:
         - Key: Name
           Value: MyRaiseSamplePriSub2a
@@ -48,7 +49,8 @@ Resources:
     Properties:
       AvailabilityZone: !FindInMap [RegionAZ, !Ref "AWS::Region", secondary]
       VpcId: !Ref myRaiseTechVPC
-      CidrBlock: 10.0.1.0/24
+      CidrBlock: 10.0.3.0/24
+      MapPublicIpOnLaunch: true #Boolean|このサブネットで起動されたインスタンスがパブリックIPv4アドレスの自動割り当てを受理するか、デフォルトはfalse
       Tags:
         - Key: Name
           Value: MyRaiseSamplePubSub1c
