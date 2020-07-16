@@ -43,14 +43,39 @@ Resources:
       ImageId: ami-082e0157fbbf13d6c # AMIid
       InstanceType: t2.micro
       Monitoring: true
-      SecurityGroupIds: # type: stringlist
-        - Fn::ImportValue: MyRaiseSample-it-01-SEC-myRaiseTechSecWeb01
-      SubnetId: # type: string(only resource)
-        !ImportValue MyRaiseSample-it-01-myRaiseTechPublicSubnet01a
-        # - Fn::ImportValue: MyRaiseSample-it-01-myRaiseTechPublicSubnet01a
+      NetworkInterfaces:
+        - NetworkInterfaceId: !Ref myRaiseTechENI
+          DeviceIndex: "0"
+      # SecurityGroupIds: # type: stringlist
+      #   - Fn::ImportValue: MyRaiseSample-it-01-SEC-myRaiseTechSecWeb01
+      # SubnetId: # type: string(only resource)
+      #   !ImportValue MyRaiseSample-it-01-myRaiseTechPublicSubnet01a
       UserData: !Base64 | # bootingPrograms
         #!/bin/bash -ex
         # put your script here
+      Tags:
+        - Key: Name
+          Value: MyRaiseSample-it-01-APP
+  # =============ENI(パブリックサブネット1a)=======================================
+  myRaiseTechENI:
+    Type: AWS::EC2::NetworkInterface
+    Properties:
+      Description: Fixed Private IP Addresses #説明
+      GroupSet:
+        - Fn::ImportValue: MyRaiseSample-it-01-SEC-myRaiseTechSecWeb01 #関連付けられたSecurityGroupIDのリスト
+      # InterfaceType: #String #種類を指定
+      # Ipv6AddressCount: #Integer #ネットワークインターフェイスに割り当てるIPv6アドレスの数、EC2ではサブネットの範囲から自動で選択
+      # Ipv6Addresses:
+      #     Ipv6Address: #String #関連付ける固定のIPv6アドレス(1つ以上)
+      PrivateIpAddress: 10.0.1.1 #単一のプライベートIPv4アドレスを割り当てる場合
+      # PrivateIpAddresses: #複数のプライベートIPv4アドレスを指定する場合
+      #    # PrivateIpAddressSpecification
+      #   - Primary: # Boolean #trueならprimaryで一つだけ
+      #     PrivateIpAddress: #String #プライマリとするプライベートIPアドレス
+      #      #EC2によって自動的に割り当てたい場合は指定しない
+      # SecondaryPrivateIpAddressCount: #Integer #セカンダリプライベートIPv4アドレスの数。インスタンスタイプあたりのENIごとのプライベートIPアドレス
+      # SourceDestCheck: #Boolean #インスタンスへのトラフィックまたはインスタンスからのトラフィックを検証するかどうか
+      SubnetId: !ImportValue MyRaiseSample-it-01-myRaiseTechPublicSubnet01a #ネットワークインターフェイスに関連付けるサブネットのID
       Tags:
         - Key: Name
           Value: MyRaiseSample-it-01-APP
@@ -110,7 +135,7 @@ Resources:
   myRaiseTechAlb01:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     Properties:
-      IpAddressType: dualstack
+      IpAddressType: ipv4
       # LoadBalancerAttributes: # ロードバランサーの属性
       #   - # アクセスログ/削除保護/アイドルタイムアウト/ルーティングの制限/クロスゾーン負荷分散の設定
       Name: my-raisetech-alb #ロードバランサーの名前(32文字)
