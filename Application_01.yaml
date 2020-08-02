@@ -96,7 +96,7 @@ Resources:
       DBName: myRaiseTechDB
       DBParameterGroupName: aws-raise-inoue-postgres12
       # DBSecurityGroups:
-      #   - Fn::ImportValue:
+      #   - !Ref rdsDBSecurityGroup
       # DBSnapshotIdentifier:
       DBSubnetGroupName: !Ref myRaiseTechRdsDBSubnetGroup
       Engine: postgres
@@ -115,12 +115,29 @@ Resources:
       # SourceDBInstanceIdentifier: #Readreplicaでの設定
       # StorageEncrypted: true|false
       StorageType: gp2
-      VPCSecurityGroups:
+      VPCSecurityGroups: # VPCSecurityGroupsとDBSecurityGroupsのどちらかのみ指定
         - Fn::ImportValue: MyRaiseSample-it-01-SEC-myRaiseTechSecRds01
       Tags:
         - Key: Name
           Value: myRaiseTechDB-instance
-
+  # ------------------------------------------
+  # rdsDBSecurityGroup:
+  #   Type: AWS::RDS::DBSecurityGroup
+  #   Properties:
+  #     EC2VpcId:
+  #       Fn::ImportValue: MyRaiseSample-it-01-myRaiseTechVPC
+  #     GroupDescription: inbound for PostgreSQL
+  #     DBSecurityGroupIngress:
+  #       - # CIDRIP: --.--.--.--/--
+  #         EC2SecurityGroupId:
+  #           Fn::ImportValue: MyRaiseSample-it-01-SEC-myRaiseTechSecRds01
+  #         # EC2SecurityGroupName:
+  #         # Fn::ImportValue: MyRaiseSample-it-01-SEC-myRaiseTechSecRds01
+  #         # EC2SecurityGroupOwnerId:
+  #   # Tags:
+  #   # - Key: keyname
+  #   # Value: value
+  # -----------------------------------------
   myRaiseTechRdsDBSubnetGroup:
     Type: AWS::RDS::DBSubnetGroup
     Properties:

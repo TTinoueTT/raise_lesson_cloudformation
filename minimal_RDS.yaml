@@ -1,0 +1,95 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: minimal network for RDS
+# Metadata:
+
+Parameters:
+  myRdsPassword:
+    Description: this DB instance(postgre) Master userpassword
+    Type: String
+    Default: password
+    MaxLength: 128
+    MinLength: 8
+    NoEcho: true
+
+Mappings:
+  RegionAZ:
+    ap-northeast-1:
+      primary: ap-northeast-1a
+      secondary: ap-northeast-1c
+
+# Conditions:
+
+Resources:
+  # VPC ------------------------------------------------
+  myVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 172.0.10.0/16
+      EnableDnsSupport: true
+      Tags:
+        - Key: Name
+          Value: my-vpc
+  # SUBNET ------------------------------------------------
+  myPrivateSubnetA:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !FindInMap [RegionAZ, !Ref "AWS::Region", primary]
+      VpcId: !Ref myVPC
+      CidrBlock: 172.0.2.0/24
+      Tags:
+        - Key: Name
+          Value: my-prisub
+  myPrivateSubnetC:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !FindInMap [RegionAZ, !Ref "AWS::Region", secondary]
+      VpcId: !Ref myVPC
+      CidrBlock: 172.0.4.0/24
+      Tags:
+        - Key: Name
+          Value: my-prisub
+
+  # SECURITY ---------------------------------------------
+  mySgRds:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      # GroupName:
+      GroupDescription: Allow PostgreSQL to EC2
+      VpcId: !Ref myVPC
+      SecurityGroupIngress: # Inbound
+        - IpProtocol: tcp
+          FromPort: 5432
+          ToPort: 5432
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: my-securitygroup-postgres
+  # RDS ------------------------------------------------
+  DBinstance:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      AllocatedStorage: "5"
+      DBInstanceClass: db.t2.micro
+      DBName: MyDB
+      # DBSecurityGroups:
+      # - !Ref mySgRds
+      Port: "5432"
+      DBSubnetGroupName: !Ref rdsDBSubnetGroup
+      Engine: postgres
+      EngineVersion: "12.2"
+      MasterUserPassword: !Ref myRdsPassword
+      MasterUsername: root
+      VPCSecurityGroups:
+        - !Ref mySgRds
+  rdsDBSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: private-subnets
+      SubnetIds:
+        - !Ref myPrivateSubnetA
+        - !Ref myPrivateSubnetC
+      Tags:
+        - Key: Name
+          Value: my-rdsDBsubnetgroupe
+    # DeletionPolicy: Snapshot
+# Outputs:
