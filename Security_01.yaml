@@ -85,6 +85,7 @@ Resources:
           FromPort: 5432
           ToPort: 5432
           # CidrIp: 0.0.0.0/0
+          SourceSecurityGroupId: !Ref myRaiseTechSecWeb01
       Tags:
         - Key: Name
           Value: MyRaiseSample-it-01-SEC

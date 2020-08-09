@@ -40,7 +40,7 @@ Resources:
     Properties:
       KeyName: !Ref KeyPairName # publickey
       # DisableApiTermination:
-      ImageId: ami-082e0157fbbf13d6c # AMIid
+      ImageId: ami-0cc75a8978fbbc969 # AMIid
       InstanceType: t2.micro
       Monitoring: true
       NetworkInterfaces:
@@ -50,9 +50,12 @@ Resources:
       #   - Fn::ImportValue: MyRaiseSample-it-01-SEC-myRaiseTechSecWeb01
       # SubnetId: # type: string(only resource)
       #   !ImportValue MyRaiseSample-it-01-myRaiseTechPublicSubnet01a
-      UserData: !Base64 | # bootingPrograms
+      UserData: !Base64 | # bootingPrograms rootで実行する
         #!/bin/bash -ex
         # put your script here
+        exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
+        yum -y update
+        echo "Hello from user-data!"
       Tags:
         - Key: Name
           Value: MyRaiseSample-it-01-APP
@@ -185,10 +188,10 @@ Resources:
       HealthCheckEnabled: true #ヘルスチェックが有効になっているかどうか、TargetTypeの値で真偽値が決まる
       HealthCheckIntervalSeconds: 10 #5~300ヘルスチェックの間隔(秒単位)
       HealthCheckPath: / #1~1024文字ヘルスチェックのターゲットの送信先であるpingパス、デフォルトは"/"
-      HealthCheckPort: traffic-port #ロードバランサーがターゲットのヘルスチェックを行うときに使用するポート。デフォルトは traffic-port で、各ターゲットがロードバランサーからのトラフィックを受信するポート
+      HealthCheckPort: "3000" #ロードバランサーがターゲットのヘルスチェックを行うときに使用するポート。デフォルトは traffic-port で、各ターゲットがロードバランサーからのトラフィックを受信するポート
       HealthCheckProtocol: HTTP
       HealthCheckTimeoutSeconds: 5 #2~120,ヘルスチェックで失敗と見なす、ターゲットからレスポンスがない時間(秒単位)
-      HealthyThresholdCount: 2 #2~10,非正常なインスタンスが正常であると見なすまでに必要なヘルスチェックの連続成功回数
+      HealthyThresholdCount: 5 #2~10,非正常なインスタンスが正常であると見なすまでに必要なヘルスチェックの連続成功回数
       Matcher: #ターゲットからの正常なレスポンスを確認するために使用するHTTPコード
         HttpCode: "200" #ALBの場合、200~499。デフォルトは200
       Name: myRaiseTechAlb #ターゲットグループの名前
@@ -201,7 +204,9 @@ Resources:
       #   -  #TargetGroupAttributeのリスト
       Targets:
         - Id: !Ref myRaiseTechEc2a #TargetDescriptionのリスト
-          Port: 80
+          Port: 3000
+        # - Id: !Ref myRaiseTechEc2a #TargetDescriptionのリスト
+        #   Port: 3000
       TargetType: instance #| ip | lambda
       UnhealthyThresholdCount: 2 #2~10,異常であると見なされるまでに必要なヘルスチェックの連続失敗回数
       VpcId:
