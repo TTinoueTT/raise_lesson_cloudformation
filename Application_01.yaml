@@ -188,7 +188,7 @@ Resources:
       HealthCheckEnabled: true #ヘルスチェックが有効になっているかどうか、TargetTypeの値で真偽値が決まる
       HealthCheckIntervalSeconds: 10 #5~300ヘルスチェックの間隔(秒単位)
       HealthCheckPath: / #1~1024文字ヘルスチェックのターゲットの送信先であるpingパス、デフォルトは"/"
-      HealthCheckPort: "3000" #ロードバランサーがターゲットのヘルスチェックを行うときに使用するポート。デフォルトは traffic-port で、各ターゲットがロードバランサーからのトラフィックを受信するポート
+      HealthCheckPort: traffic-port #ロードバランサーがターゲットのヘルスチェックを行うときに使用するポート。デフォルトは traffic-port で、各ターゲットがロードバランサーからのトラフィックを受信するポート
       HealthCheckProtocol: HTTP
       HealthCheckTimeoutSeconds: 5 #2~120,ヘルスチェックで失敗と見なす、ターゲットからレスポンスがない時間(秒単位)
       HealthyThresholdCount: 5 #2~10,非正常なインスタンスが正常であると見なすまでに必要なヘルスチェックの連続成功回数
@@ -204,7 +204,7 @@ Resources:
       #   -  #TargetGroupAttributeのリスト
       Targets:
         - Id: !Ref myRaiseTechEc2a #TargetDescriptionのリスト
-          Port: 3000
+          Port: 80
         # - Id: !Ref myRaiseTechEc2a #TargetDescriptionのリスト
         #   Port: 3000
       TargetType: instance #| ip | lambda
