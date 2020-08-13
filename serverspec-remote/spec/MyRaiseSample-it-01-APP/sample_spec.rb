@@ -1,28 +1,73 @@
 require 'spec_helper'
 
-describe package('httpd'), :if => os[:family] == 'redhat' do
-  it { should be_installed }
+# package
+%w[
+  curl file git ruby which texinfo bzip2-devel curl-devel
+  expat-devel ncurses-devel zlib-devel make glibc-headers
+  openssl-devel readline libyaml-devel readline-devel
+  libicu-devel zlib zlib-devel libffi-devel libxml2 libxslt
+  libxml2-devel libxslt-devel sqlite-devel ImageMagick
+  ImageMagick-devel libxcrypt-compat nginx
+].each do |pkg|
+  describe package(pkg), :if => os[:family] == 'amazon' do
+    it { should be_installed }
+  end
 end
 
-describe package('apache2'), :if => os[:family] == 'ubuntu' do
-  it { should be_installed }
+# npm
+%w[yarn].each do |npm|
+  describe package(npm) do
+    # let(:disable_sudo) { true }
+    it { should be_installed.by(:npm) }
+  end
 end
 
-describe service('httpd'), :if => os[:family] == 'redhat' do
+# gem
+%w[bundler rails].each do |gems|
+  describe package(gems) do
+    # let(:disable_sudo) { true }
+    it { should be_installed.by(:gem) }
+  end
+end
+
+# port
+%w[80 22].each do |port_num|
+  describe port(port_num) do
+    it { should be_listening }
+  end
+end
+
+# service
+describe service('nginx') do
   it { should be_enabled }
   it { should be_running }
 end
 
-describe service('apache2'), :if => os[:family] == 'ubuntu' do
-  it { should be_enabled }
-  it { should be_running }
+# user
+describe user('ec2-user') do
+  it { should exist }
+  it { should belong_to_group 'ec2-user' }
 end
 
-describe service('org.apache.httpd'), :if => os[:family] == 'darwin' do
-  it { should be_enabled }
-  it { should be_running }
+# Check the package with a command that does not use sudo
+%w[anyenv rbenv nodenv yarn npm].each do |dis_su_pkg|
+  describe command("#{dis_su_pkg} -v") do
+    let(:shell) { '/bin/bash' }
+    let(:pre_command) { 'cd /home/ec2-user/' }
+    let(:disable_sudo) { true }
+    its(:exit_status) { should eq 0 }
+  end
 end
 
-describe port(80) do
-  it { should be_listening }
+describe command('ruby -v') do
+  let(:shell) { '/bin/bash' }
+  let(:disable_sudo) { true }
+  its(:exit_status) { should eq 1 }
+end
+
+# file
+describe file('ruby -v') do
+  let(:shell) { '/bin/bash' }
+  let(:disable_sudo) { true }
+  its(:exit_status) { should eq 1 }
 end
