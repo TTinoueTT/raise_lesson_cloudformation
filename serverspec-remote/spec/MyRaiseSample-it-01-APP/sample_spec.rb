@@ -56,7 +56,7 @@ end
     let(:sudo_options) { '-u ec2-user' }
     # let(:path) { '/usr/lib64/fluent/ruby/bin:$PATH' }
     # let(:pre_command) { 'cd /home/ec2-user/' }
-    # let(:disable_sudo) { true }
+    let(:disable_sudo) { true }
     its(:exit_status) { should eq 0 }
   end
 end
@@ -87,6 +87,7 @@ describe file('/home/ec2-user/raise_app/tmp/unicorn.sock') do
   it { should exist }
 end
 
+# /var/lib/nginx permission do ec2-user
 describe file('/var/lib/nginx') do
   it { should be_owned_by 'ec2-user' }
 end
