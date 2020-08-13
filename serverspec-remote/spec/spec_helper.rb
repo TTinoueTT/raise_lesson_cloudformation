@@ -30,4 +30,12 @@ set :ssh_options, options
 # set :env, :LANG => 'C', :LC_MESSAGES => 'C'
 
 # Set PATH
-# set :path, '/sbin:/usr/local/sbin:$PATH'
+set :path, '/sbin:/usr/local/sbin:/home/ec2-user.anyenv/envs/nodenv/versions/12.18.3/bin:
+  /home/ec2-user/.anyenv/envs/rbenv/shims:/home/ec2-user/.anyenv/envs/rbenv/bin:
+  /home/ec2-user/.anyenv/envs/nodenv/shims:/home/ec2-user/.anyenv/envs/nodenv/bin:
+  /home/linuxbrew/.linuxbrew/bin:
+  /home/linuxbrew/.linuxbrew/sbin:
+  /usr/local/bin:/usr/bin:
+  /usr/local/sbin:/usr/sbin:
+  /home/ec2-user/.local/bin:
+  /home/ec2-user/bin$PATH'
