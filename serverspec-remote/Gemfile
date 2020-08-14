@@ -2,12 +2,12 @@
 
 source 'https://rubygems.org'
 
-git_source(:github) {|repo_name| "https://github.com/#{repo_name}" }
+git_source(:github) { |repo_name| "https://github.com/#{repo_name}" }
 
 # gem "rails"
 
-gem 'serverspec'
-gem 'rake'
 gem 'highline'
+gem 'rake'
+gem 'serverspec'
 
 gem 'pry', '~> 0.13.1'
