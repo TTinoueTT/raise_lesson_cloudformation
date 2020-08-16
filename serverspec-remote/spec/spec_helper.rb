@@ -30,23 +30,26 @@ set :ssh_options, options
 # set :env, :LANG => 'C', :LC_MESSAGES => 'C'
 
 # Set PATH
-set :path, '/sbin:/usr/local/sbin:
-  /home/ec2-user.anyenv/envs/nodenv/versions/12.18.3/bin:
-  /home/ec2-user/.anyenv/envs/rbenv/shims:
-  /home/ec2-user/.anyenv/envs/rbenv/bin/rbenv:
-  /home/ec2-user/.anyenv/envs/rbenv/bin:
-  /home/ec2-user/.anyenv/envs/nodenv/shims/npm:
-  /home/ec2-user/.anyenv/envs/nodenv/shims/yarn:
-  /home/ec2-user/.anyenv/envs/nodenv/shims:
-  /home/ec2-user/.anyenv/envs/nodenv/bin:
-  /home/ec2-user/.anyenv/envs/nodenv/bin/nodenv:
-  /home/linuxbrew/.linuxbrew/bin/anyenv:
-  /home/linuxbrew/.linuxbrew/bin:
-  /home/linuxbrew/.linuxbrew/sbin:
-  /usr/local/bin:
-  /usr/bin:
-  /usr/local/sbin:
-  /usr/sbin:
-  /home/ec2-user/.local/bin:
-  /home/ec2-user/bin
-  $PATH'
+set :path, '/sbin:/usr/local/sbin:/home/linuxbrew/.linuxbrew/bin:~/.anyenv/envs/rbenv/bin:$PATH'
+# /home/ec2-user.anyenv/envs/nodenv/versions/12.18.3/bin:
+# /home/ec2-user/.anyenv/envs/rbenv/shims:
+# /home/ec2-user/.anyenv/envs/rbenv/bin/rbenv:
+# /home/ec2-user/.anyenv/envs/rbenv/bin:
+# /home/ec2-user/.anyenv/envs/nodenv/shims/npm:
+# /home/ec2-user/.anyenv/envs/nodenv/shims/yarn:
+# /home/ec2-user/.anyenv/envs/nodenv/shims:
+# /home/ec2-user/.anyenv/envs/nodenv/bin:
+# /home/ec2-user/.anyenv/envs/nodenv/bin/nodenv:
+# /home/linuxbrew/.linuxbrew/bin/anyenv:
+# /home/linuxbrew/.linuxbrew/sbin:
+# /usr/local/bin:
+# /usr/bin:
+# /usr/local/sbin:
+# /usr/sbin:
+# /home/ec2-user/.local/bin:
+# /home/ec2-user/bin:
+# brew, anyenv = /home/linuxbrew/.linuxbrew/bin:
+
+def user_command(user, cmd)
+  command("su -l #{user} -c '#{cmd}'")
+end
