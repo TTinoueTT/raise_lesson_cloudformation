@@ -2,3 +2,9 @@
 - name: hello world
   debug:
     msg: "Hello World!"
+
+- name: yum pkgs install
+  yum:
+    name: { { package } }
+    state: present
+  become: yes
