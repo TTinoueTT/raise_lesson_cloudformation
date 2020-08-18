@@ -14,6 +14,17 @@ require 'spec_helper'
   end
 end
 
+# 'Development tools'package
+%w[
+  autoconf automake bison	byacc cscope ctags diffstat doxygen
+  flex gcc-c++ gcc-gfortran	indent intltool	libtool patch
+  patchutils rcs rpm-build rpm-sign subversion swig systemtap
+].each do |development_tool|
+  describe package(development_tool), :if => os[:family] == 'amazon' do
+    it { should be_installed }
+  end
+end
+
 # npm /succeed
 %w[yarn].each do |npm|
   describe package(npm) do
