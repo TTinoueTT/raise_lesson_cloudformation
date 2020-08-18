@@ -1,0 +1,12 @@
+---
+- hosts: MyRaiseSample-it-01-APP
+  vars:
+    ansible_become: yes
+    ansible_become_method: sudo
+  roles:
+    - yum_pkg
+  tasks:
+    - name: Install Nginx
+      yum:
+        name: nginx
+        state: present
