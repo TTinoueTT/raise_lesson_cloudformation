@@ -6,6 +6,7 @@
     hello: "Hello World!"
   roles:
     - yum_pkg
+    - homebrew_install
   tasks:
     - name: Change interpreter
       set_fact:
