@@ -1,0 +1,7 @@
+--- # homebrew_installのroles
+- name: Download Homebrew
+  become: yes
+  get_url:
+    url: https://raw.githubusercontent.com/Homebrew/install/master/install.sh
+    dest: /home/linuxbrew/.linuxbrew
+    # mode: '0440'
