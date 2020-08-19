@@ -1,10 +1,23 @@
----
+--- #yum_pkgのroles
+# python2で動かす
+- name: Change interpreter
+  set_fact:
+    ansible_python_interpreter: "/usr/bin/python"
+
+# helloメッセージ確認
 - name: hello world
   debug:
-    msg: "Hello World!"
+    msg: "{{ hello }}"
 
+# EPELリポジトリのインストール
+- name: Install epel-release
+  yum:
+    name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+    state: present
+  become: yes
+# 基本yumパッケージインストール
 - name: yum pkgs install
   yum:
-    name: { { package } }
+    name: "{{ package }}"
     state: present
   become: yes
