@@ -1,4 +1,4 @@
---- #yum_pkgのroles
+--- # yum_pkgのroles
 # python2で動かす
 - name: Change interpreter
   set_fact:
