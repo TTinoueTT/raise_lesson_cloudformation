@@ -1,0 +1,33 @@
+---
+# 基本yumパッケージ群
+package:
+  - "@Development tools"
+  - curl
+  - file
+  - git
+  - ruby
+  - which
+  - texinfo
+  - bzip2-devel
+  - libcurl-devel
+  - expat-devel
+  - ncurses-devel
+  - zlib-devel
+  - make
+  - glibc-headers
+  - openssl-devel
+  - readline
+  - libyaml-devel
+  - readline-devel
+  - libicu-devel
+  - zlib
+  - zlib-devel
+  - libffi-devel
+  - libxml2
+  - libxslt
+  - libxml2-devel
+  - libxslt-devel
+  - sqlite-devel
+  - ImageMagick
+  - ImageMagick-devel
+  - nginx
