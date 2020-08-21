@@ -1,0 +1,18 @@
+--- # brew install list
+- name: install hello
+  homebrew:
+    name: hello
+    path: "{{ linuxbrew_path.path2 }}"
+    state: present
+
+- name: install postgresql
+  homebrew:
+    name: postgresql
+    path: "{{ linuxbrew_path.path2 }}"
+    state: present
+
+- name: install anyenv
+  homebrew:
+    name: anyenv
+    path: "{{ linuxbrew_path.path2 }}"
+    state: present
