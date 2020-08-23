@@ -3,8 +3,11 @@
   vars_files:
     - whole_vars/base_vars.yml
   roles:
-    - yum_pkg
-    - set_homebrew
+    # - yum_pkg
+    # - set_homebrew
+    - set_anyenv
+    - set_ruby
+    - set_nodej
   tasks:
     # - name: Change interpreter
     #   set_fact:
