@@ -3,19 +3,16 @@
   vars:
     ansible_become: yes
     ansible_become_method: sudo
+    hello: "Hello World!"
   roles:
     - yum_pkg
+    - homebrew_install
   tasks:
     - name: Change interpreter
       set_fact:
         ansible_python_interpreter: "/usr/bin/python"
-    - name: Install epel-release
-      yum:
-        name: epel-release
-        state: present
-      become: yes
-
-    - name: Install Nginx
-      yum:
-        name: nginx
-        state: present
+    # - name: Install epel-release
+    #   yum:
+    #     name: epel-release
+    #     state: present
+    #   become: yes
