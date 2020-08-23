@@ -1,0 +1,17 @@
+---
+- name: set Ruby
+  shell: |
+    rbenv install -v "{{ ruby_version }}"
+    rbenv rehash "{{ ruby_version }}"
+    rbenv global "{{ ruby_version }}"
+  args:
+    executable: /bin/bash
+
+- name: install gem
+  gem:
+    name: "{{ item }}"
+    state: present
+    executable: /home/ec2-user/.anyenv/envs/rbenv/shims/gem
+  loop:
+    - bundler
+    - rails
