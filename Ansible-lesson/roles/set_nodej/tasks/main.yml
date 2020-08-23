@@ -1,0 +1,21 @@
+---
+- name: set node.js
+  shell: |
+    nodenv install -v "{{ nodej_version }}"
+    nodenv rehash "{{ nodej_version }}"
+    nodenv global "{{ nodej_version }}"
+  args:
+    executable: /bin/bash
+
+- name: Install package yarn
+  npm:
+    name: yarn
+    global: yes
+    executable: /home/ec2-user/.anyenv/envs/nodenv/shims/npm
+    state: present
+
+- name: set yarn path
+  shell: |
+    echo 'export PATH="$HOME.anyenv/envs/nodenv/versions/12.18.3/bin:$PATH"' >> ~/.bash_profile && source ~/.bash_profile
+  args:
+    executable: /bin/bash

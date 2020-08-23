@@ -112,3 +112,7 @@ end
 describe file('/home/ec2-user/raise_app/Gemfile') do
   it { should exist }
 end
+
+# bundle に Webpacker あるか
+# anyenv のコマンド確認
+# homebre の確認
