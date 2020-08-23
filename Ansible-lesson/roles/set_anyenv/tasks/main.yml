@@ -1,0 +1,20 @@
+---
+# this file don't install anyenv
+# anyenv installed by homebrew role
+- name: initialization anyenv & install ~env
+  shell: |
+    anyenv init && anyenv install --init
+    echo 'eval "$(anyenv init -)"' >> ~/.bash_profile && source ~/.bash_profile
+  args:
+    executable: /bin/bash
+
+- name: install ~env
+  shell: |
+    anyenv install --update
+    anyenv install "{{ item }}"
+    exec $SHELL -l
+  args:
+    executable: /bin/bash
+  loop:
+    - rbenv
+    - nodenv
