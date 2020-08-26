@@ -5,9 +5,10 @@
   roles:
     # - yum_pkg
     # - set_homebrew
-    - set_anyenv
-    - set_ruby
+    # - set_anyenv
+    # - set_ruby
     - set_nodej
+    - set_rails
   tasks:
     # - name: Change interpreter
     #   set_fact:
