@@ -1,0 +1,21 @@
+--- # setting postgresql
+# Example from Ansible Playbooks
+- name: set postgre DB conf
+  template:
+    src: ../templates/postgre_db_conf.j2
+    dest: /home/ec2-user/"{{ app_dir_name }}"/config/database.yaml
+    owner: ec2-user
+    group: ec2-user
+    mode: 0664
+    validate: "/usr/sbin/visudo -cf %s"
+
+- name: Insert line
+  blockinfile:
+    dest: /home/ec2-user/"{{ app_dir_name }}"/config/environments/development.rb
+    # marker: "# {mark} ANSIBLE MANAGED BLOCK"
+    insertafter: EOF
+    block: |
+      config.hosts << 'my-raisetech-alb-1107909197.ap-northeast-1.elb.amazonaws.com'
+      # Whitelist
+      config.web_console.whitelisted_ips = '0.0.0.0/0'
+      # {{ ansible_date_time.iso8601 }}
