@@ -1,0 +1,9 @@
+---
+- name: create app directory
+  shell: |
+    rails new "{{ app_dir_name }}" --database="{{ set_DBMS }}"
+  args:
+    executable: /bin/bash
+    chdir: /home/ec2-user
+# =================================================
+- import_tasks: set_postgresql.yml
